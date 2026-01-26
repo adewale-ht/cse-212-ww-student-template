@@ -22,7 +22,33 @@ public static class SetsAndMaps
     public static string[] FindPairs(string[] words)
     {
         // TODO Problem 1 - ADD YOUR CODE HERE
-        return [];
+        var result = new List<string>();
+        var used = new HashSet<string>();
+        var wordSet = new HashSet<string>(words);
+        
+        foreach (var word in words)
+        {
+            // Skip if we've already used this word in a pair
+            if (used.Contains(word))
+                continue;
+                
+            // Skip if both characters are the same (no match possible)
+            if (word[0] == word[1])
+                continue;
+                
+            // Create the reversed word
+            var reversed = $"{word[1]}{word[0]}";
+            
+            // Check if reversed word exists in the set
+            if (wordSet.Contains(reversed))
+            {
+                result.Add($"{word} & {reversed}");
+                used.Add(word);
+                used.Add(reversed);
+            }
+        }
+        
+        return result.ToArray();
     }
 
     /// <summary>
@@ -43,6 +69,15 @@ public static class SetsAndMaps
         {
             var fields = line.Split(",");
             // TODO Problem 2 - ADD YOUR CODE HERE
+            // The degree information is in the 4th column (index 3)
+            if (fields.Length > 3)
+            {
+                var degree = fields[3].Trim();
+                if (degrees.ContainsKey(degree))
+                    degrees[degree]++;
+                else
+                    degrees[degree] = 1;
+            }
         }
 
         return degrees;
@@ -67,7 +102,45 @@ public static class SetsAndMaps
     public static bool IsAnagram(string word1, string word2)
     {
         // TODO Problem 3 - ADD YOUR CODE HERE
-        return false;
+        // Remove spaces and convert to uppercase for comparison
+        var cleaned1 = word1.Replace(" ", "").ToUpper();
+        var cleaned2 = word2.Replace(" ", "").ToUpper();
+        
+        // If lengths are different, they can't be anagrams
+        if (cleaned1.Length != cleaned2.Length)
+            return false;
+        
+        // Count character frequencies in both words
+        var charCount = new Dictionary<char, int>();
+        
+        // Count characters in first word
+        foreach (var ch in cleaned1)
+        {
+            if (charCount.ContainsKey(ch))
+                charCount[ch]++;
+            else
+                charCount[ch] = 1;
+        }
+        
+        // Subtract characters from second word
+        foreach (var ch in cleaned2)
+        {
+            if (!charCount.ContainsKey(ch))
+                return false;
+            
+            charCount[ch]--;
+            if (charCount[ch] < 0)
+                return false;
+        }
+        
+        // Check if all counts are zero
+        foreach (var count in charCount.Values)
+        {
+            if (count != 0)
+                return false;
+        }
+        
+        return true;
     }
 
     /// <summary>
@@ -101,6 +174,19 @@ public static class SetsAndMaps
         // on those classes so that the call to Deserialize above works properly.
         // 2. Add code below to create a string out each place a earthquake has happened today and its magitude.
         // 3. Return an array of these string descriptions.
-        return [];
+        var result = new List<string>();
+        
+        if (featureCollection?.Features != null)
+        {
+            foreach (var feature in featureCollection.Features)
+            {
+                if (feature?.Properties != null)
+                {
+                    result.Add($"{feature.Properties.Place} - Mag {feature.Properties.Mag}");
+                }
+            }
+        }
+        
+        return result.ToArray();
     }
 }
