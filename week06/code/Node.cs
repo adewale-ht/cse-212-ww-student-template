@@ -21,7 +21,7 @@ public class Node
             else
                 Left.Insert(value);
         }
-        else
+        else if (value > Data)
         {
             // Insert to the right
             if (Right is null)
@@ -29,17 +29,44 @@ public class Node
             else
                 Right.Insert(value);
         }
+        // If value == Data, do nothing (no duplicates allowed)
     }
 
     public bool Contains(int value)
     {
         // TODO Start Problem 2
-        return false;
+        if (value == Data)
+            return true;
+        
+        if (value < Data)
+        {
+            // Search in left subtree
+            if (Left == null)
+                return false;
+            return Left.Contains(value);
+        }
+        else
+        {
+            // Search in right subtree
+            if (Right == null)
+                return false;
+            return Right.Contains(value);
+        }
     }
 
     public int GetHeight()
     {
         // TODO Start Problem 4
-        return 0; // Replace this line with the correct return statement(s)
+        int leftHeight = 0;
+        int rightHeight = 0;
+        
+        if (Left != null)
+            leftHeight = Left.GetHeight();
+        
+        if (Right != null)
+            rightHeight = Right.GetHeight();
+        
+        // Height includes this node + the max height from either subtree
+        return 1 + Math.Max(leftHeight, rightHeight);
     }
 }
